@@ -19,7 +19,7 @@ var AwsxServiceMeshCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println("Command getElementDetails started")
+		log.Println("Command getAppMesh.metadata started")
 		vaultUrl, _ := cmd.Flags().GetString("vaultUrl")
 		accountNo, _ := cmd.Flags().GetString("accountId")
 		region, _ := cmd.Flags().GetString("zone")
@@ -56,7 +56,7 @@ var AwsxServiceMeshCmd = &cobra.Command{
 }
 
 func getAppmeshResources(region string, accessKey string, secretKey string, env string) *appmesh.DescribeMeshOutput {
-	log.Println("AWS Mesh metadata")
+	log.Println("AWS AppMesh metadata by Mesh")
 	appmeshClient := client.GetClient(region, accessKey, secretKey)
 	appmeshResourceRequest := &appmesh.DescribeMeshInput{
 		// mesh name - (abdul-test-1)
