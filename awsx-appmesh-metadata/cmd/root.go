@@ -56,23 +56,38 @@ var awsxServiceMeshCmd = &cobra.Command{
 	},
 }
 
-func getAppmeshResources(region string, accessKey string, secretKey string, env string) *appmesh.DescribeMeshOutput {
-	log.Println("AWS AppMesh metadata by Mesh")
-	appmeshClient := client.GetClient(region, accessKey, secretKey)
-	appmeshResourceRequest := &appmesh.DescribeMeshInput{
-		// mesh name - (abdul-test-1)
-		MeshName: aws.String("abdul-test-1"),
-	}
-	AppMeshResponse, err := appmeshClient.DescribeMesh(appmeshResourceRequest)
+// type Environment  struct {
+// 	Environment string ="Dev";
+// }
 
-	log.Println(AppMeshResponse)
+func getAppmeshResources(region string, accessKey string, secretKey string, env string) *appmesh.ListMeshesOutput {
+	log.Println("List of AWS Mesh Arn")
+	appmeshClient := client.GetClient(region, accessKey, secretKey)
+	appmeshResourceRequest := &appmesh.ListMeshesInput{}
+	AppMeshResponse, err := appmeshClient.ListMeshes(appmeshResourceRequest)
 	if err != nil {
 		log.Fatalln("Error: ", err)
+	}
+	for _, ARN := range AppMeshResponse.Meshes {
+		clust := getAppmesh(region, accessKey, secretKey, env, (string(*ARN.MeshName)))
+		log.Println(clust)
 	}
 
 	return AppMeshResponse
 }
 
+func getAppmesh(region string, accessKey string, secretKey string, env string, meshName string) *appmesh.DescribeMeshOutput {
+	log.Println("AWS AppMesh metadata by Mesh")
+	appmeshClient := client.GetClient(region, accessKey, secretKey)
+	appmeshResourceRequest := &appmesh.DescribeMeshInput{
+		MeshName: aws.String(meshName),
+	}
+	AppMeshResponse, err := appmeshClient.DescribeMesh(appmeshResourceRequest)
+	if err != nil {
+		log.Fatalln("Error: ", err)
+	}
+	return AppMeshResponse
+}
 func Execute() {
 	err := awsxServiceMeshCmd.Execute()
 	if err != nil {
