@@ -12,7 +12,7 @@ import (
 )
 
 // AwsxCloudElementsCmd represents the base command when called without any subcommands
-var AwsxServiceMeshCmd = &cobra.Command{
+var awsxServiceMeshCmd = &cobra.Command{
 	Use:   "getElementDetails",
 	Short: "getElementDetails command gets resource counts",
 	Long:  `getElementDetails command gets resource counts details of an AWS account`,
@@ -26,6 +26,7 @@ var AwsxServiceMeshCmd = &cobra.Command{
 		acKey, _ := cmd.Flags().GetString("accessKey")
 		secKey, _ := cmd.Flags().GetString("secretKey")
 		env, _ := cmd.Flags().GetString("env")
+
 		//crossAccountRoleArn, _ := cmd.Flags().GetString("crossAccountRoleArn")
 
 		if vaultUrl != "" && accountNo != "" && env != "" {
@@ -73,7 +74,7 @@ func getAppmeshResources(region string, accessKey string, secretKey string, env 
 }
 
 func Execute() {
-	err := AwsxServiceMeshCmd.Execute()
+	err := awsxServiceMeshCmd.Execute()
 	if err != nil {
 		log.Fatal("There was some error while executing the CLI: ", err)
 		return
@@ -81,11 +82,12 @@ func Execute() {
 }
 
 func init() {
-	AwsxServiceMeshCmd.Flags().String("vaultUrl", "", "vault end point")
-	AwsxServiceMeshCmd.Flags().String("accountId", "", "aws account number")
-	AwsxServiceMeshCmd.Flags().String("zone", "", "aws region")
-	AwsxServiceMeshCmd.Flags().String("accessKey", "", "aws access key")
-	AwsxServiceMeshCmd.Flags().String("secretKey", "", "aws secret key")
-	AwsxServiceMeshCmd.Flags().String("env", "", "aws env Resquired")
+	awsxServiceMeshCmd.Flags().String("vaultUrl", "", "vault end point")
+	awsxServiceMeshCmd.Flags().String("accountId", "", "aws account number")
+	awsxServiceMeshCmd.Flags().String("zone", "", "aws region")
+	awsxServiceMeshCmd.Flags().String("accessKey", "", "aws access key")
+	awsxServiceMeshCmd.Flags().String("secretKey", "", "aws secret key")
+	awsxServiceMeshCmd.Flags().String("env", "", "aws env Resquired")
+	//awsxServiceMeshCmd.Flags().String("getMetaData", "", "aws env Resquired")
 	//AwsxCloudElementsCmd.Flags().String("crossAccountRoleArn", "", "aws cross account role arn")
 }
