@@ -12,9 +12,9 @@ import (
 
 // AwsxCloudElementsCmd represents the base command when called without any subcommands
 var AwsxServiceMeshCmd = &cobra.Command{
-	Use:   "getElementDetails",
-	Short: "getElementDetails command gets resource counts",
-	Long:  `getElementDetails command gets resource counts details of an AWS account`,
+	Use:   "GetAppMeshArn",
+	Short: "GetAppMeshArn command gets resource Arn",
+	Long:  `GetAppMeshArn command gets resource Arn details of an AWS account`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
@@ -52,6 +52,10 @@ var AwsxServiceMeshCmd = &cobra.Command{
 			return
 		}
 	},
+}
+
+type Tags struct {
+	Environment string `json:"Environment"`
 }
 
 func getAppmeshResources(region string, accessKey string, secretKey string, env string) *appmesh.ListMeshesOutput {
