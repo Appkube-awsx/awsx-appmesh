@@ -8,10 +8,10 @@ import (
 )
 
 type Response struct {
-	Region    string `json:"region,omitempty"`
-	AccessKey string `json:"accessKey,omitempty"`
-	SecretKey string `json:"secretKey,omitempty"`
-	//CrossAccountRoleArn string `json:"crossAccountRoleArn,omitempty"`
+	Region              string `json:"region,omitempty"`
+	AccessKey           string `json:"accessKey,omitempty"`
+	SecretKey           string `json:"secretKey,omitempty"`
+	CrossAccountRoleArn string `json:"crossAccountRoleArn,omitempty"`
 }
 
 func GetAccountDetails(vaultUrl string, accountNo string) (*Response, error) {

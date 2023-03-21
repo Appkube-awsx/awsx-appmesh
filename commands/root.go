@@ -1,11 +1,11 @@
 package commands
 
 import (
-	"fmt"
 	"log"
 
+	"github.com/Appkube-awsx/awsx-appmesh/authenticater"
 	"github.com/Appkube-awsx/awsx-appmesh/client"
-	"github.com/Appkube-awsx/awsx-appmesh/vault"
+	"github.com/Appkube-awsx/awsx-appmesh/commands/meshcmd"
 	"github.com/aws/aws-sdk-go/service/appmesh"
 	"github.com/spf13/cobra"
 )
@@ -18,37 +18,19 @@ var AwsxServiceMeshCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println("Command getAppmeshList started")
-		vaultUrl, _ := cmd.Flags().GetString("vaultUrl")
-		accountNo, _ := cmd.Flags().GetString("accountId")
-		region, _ := cmd.Flags().GetString("zone")
-		acKey, _ := cmd.Flags().GetString("accessKey")
-		secKey, _ := cmd.Flags().GetString("secretKey")
-		env, _ := cmd.Flags().GetString("env")
-		//crossAccountRoleArn, _ := cmd.Flags().GetString("crossAccountRoleArn")
+		vaultUrl := cmd.PersistentFlags().Lookup("vaultUrl").Value.String()
+		accountNo := cmd.PersistentFlags().Lookup("accountId").Value.String()
+		region := cmd.PersistentFlags().Lookup("zone").Value.String()
+		acKey := cmd.PersistentFlags().Lookup("accessKey").Value.String()
+		secKey := cmd.PersistentFlags().Lookup("secretKey").Value.String()
+		env := cmd.PersistentFlags().Lookup("env").Value.String()
+		crossAccountRoleArn := cmd.PersistentFlags().Lookup("crossAccountRoleArn").Value.String()
+		externalId := cmd.PersistentFlags().Lookup("externalId").Value.String()
 
-		if vaultUrl != "" && accountNo != "" && env != "" {
-			fmt.Println("in vault")
-			if region == "" {
-				log.Fatalln("Zone not provided. Program exit")
-				return
-			}
-			log.Println("Getting account details")
-			data, err := vault.GetAccountDetails(vaultUrl, accountNo)
-			if err != nil {
-				log.Println("Error in calling the account details api. \n", err)
-				return
-			}
-			if data.AccessKey == "" || data.SecretKey == "" {
-				log.Println("Account details not found.")
-				return
-			}
-			getAppmeshResource(region, data.AccessKey, data.SecretKey, env)
-		} else if region != "" && acKey != "" && secKey != "" && env != "" {
-			getAppmeshResource(region, acKey, secKey, env)
-		} else {
-			log.Fatal("region", secKey)
-			log.Fatal("AWS credentials like accesskey/secretkey/region/crossAccountRoleArn not provided. Program exit")
-			return
+		authFlag := authenticater.AuthenticateData(vaultUrl, accountNo, region, acKey, secKey, crossAccountRoleArn, externalId)
+
+		if authFlag {
+			getAppmeshResource(region, acKey, secKey, env, crossAccountRoleArn, externalId)
 		}
 	},
 }
@@ -57,7 +39,7 @@ type Tags struct {
 	Environment string `json:"Environment"`
 }
 
-func getAppmeshResource(region string, accessKey string, secretKey string, env string) *appmesh.ListMeshesOutput {
+func getAppmeshResource(region string, accessKey string, secretKey string, env string, crossAccountRoleArn string, externalId string) *appmesh.ListMeshesOutput {
 	log.Println("List of AWS Mesh")
 	appmeshClient := client.GetClient(region, accessKey, secretKey)
 	appmeshResourceRequest := &appmesh.ListMeshesInput{}
@@ -85,12 +67,15 @@ func Execute() {
 }
 
 func init() {
-	AwsxServiceMeshCmd.AddCommand(meshcmd.getConfigDataCmd)
-	AwsxServiceMeshCmd.Flags().String("vaultUrl", "", "vault end point")
-	AwsxServiceMeshCmd.Flags().String("accountId", "", "aws account number")
-	AwsxServiceMeshCmd.Flags().String("zone", "", "aws region")
-	AwsxServiceMeshCmd.Flags().String("accessKey", "", "aws access key")
-	AwsxServiceMeshCmd.Flags().String("secretKey", "", "aws secret key")
-	AwsxServiceMeshCmd.Flags().String("env", "", "aws env Resquired")
-	//AwsxCloudElementsCmd.Flags().String("crossAccountRoleArn", "", "aws cross account role arn")
+	AwsxServiceMeshCmd.AddCommand(meshcmd.GetConfigDataCmd)
+	AwsxServiceMeshCmd.AddCommand(meshcmd.GetArnDataCmd)
+	AwsxServiceMeshCmd.PersistentFlags().String("vaultUrl", "", "vault end point")
+	AwsxServiceMeshCmd.PersistentFlags().String("accountId", "", "aws account number")
+	AwsxServiceMeshCmd.PersistentFlags().String("zone", "", "aws region")
+	AwsxServiceMeshCmd.PersistentFlags().String("accessKey", "", "aws access key")
+	AwsxServiceMeshCmd.PersistentFlags().String("secretKey", "", "aws secret key")
+	AwsxServiceMeshCmd.PersistentFlags().String("crossAccountRoleArn", "", "aws cross account role arn")
+	AwsxServiceMeshCmd.PersistentFlags().String("externalId", "", "aws external id auth")
+	AwsxServiceMeshCmd.PersistentFlags().String("env", "", "env")
+
 }
