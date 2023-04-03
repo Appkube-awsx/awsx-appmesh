@@ -28,14 +28,14 @@ var GetArnDataCmd = &cobra.Command{
 		authFlag := authenticater.AuthenticateData(vaultUrl, accountNo, region, acKey, secKey, crossAccountRoleArn, externalId)
 
 		if authFlag {
-			getAppmeshResources(region, acKey, secKey, env)
+			getAppmeshResources(region, acKey, secKey, env, crossAccountRoleArn, externalId)
 		}
 	},
 }
 
-func getAppmeshResources(region string, accessKey string, secretKey string, env string) *appmesh.ListMeshesOutput {
+func getAppmeshResources(region string, accessKey string, secretKey string, env string, crossAccountRoleArn string, externalId string) *appmesh.ListMeshesOutput {
 	log.Println("List of AWS Mesh Arn")
-	appmeshClient := client.GetClient(region, accessKey, secretKey)
+	appmeshClient := client.GetClient(region, crossAccountRoleArn, accessKey, secretKey, externalId)
 	appmeshResourceRequest := &appmesh.ListMeshesInput{}
 	AppMeshResponse, err := appmeshClient.ListMeshes(appmeshResourceRequest)
 	if err != nil {

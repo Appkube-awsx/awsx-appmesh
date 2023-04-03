@@ -41,7 +41,7 @@ type Tags struct {
 
 func getAppmeshResource(region string, accessKey string, secretKey string, env string, crossAccountRoleArn string, externalId string) *appmesh.ListMeshesOutput {
 	log.Println("List of AWS Mesh")
-	appmeshClient := client.GetClient(region, accessKey, secretKey)
+	appmeshClient := client.GetClient(region, crossAccountRoleArn, accessKey, secretKey, externalId)
 	appmeshResourceRequest := &appmesh.ListMeshesInput{}
 	AppMeshResponse, err := appmeshClient.ListMeshes(appmeshResourceRequest)
 	if err != nil {
@@ -69,6 +69,7 @@ func Execute() {
 func init() {
 	AwsxServiceMeshCmd.AddCommand(meshcmd.GetConfigDataCmd)
 	AwsxServiceMeshCmd.AddCommand(meshcmd.GetArnDataCmd)
+	AwsxServiceMeshCmd.AddCommand(meshcmd.GetCostDataCmd)
 	AwsxServiceMeshCmd.PersistentFlags().String("vaultUrl", "", "vault end point")
 	AwsxServiceMeshCmd.PersistentFlags().String("accountId", "", "aws account number")
 	AwsxServiceMeshCmd.PersistentFlags().String("zone", "", "aws region")

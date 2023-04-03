@@ -13,8 +13,8 @@ import (
 
 var GetConfigDataCmd = &cobra.Command{
 	Use:   "getConfigData",
-	Short: "meshData",
-	Long:  `getting Appmesh Data`,
+	Short: "meshMetaData",
+	Long:  `getting Appmesh MetaData`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		vaultUrl := cmd.Parent().PersistentFlags().Lookup("vaultUrl").Value.String()
@@ -38,8 +38,8 @@ var GetConfigDataCmd = &cobra.Command{
 }
 
 func getAppmesh(region string, accessKey string, secretKey string, env string, meshName string, crossAccountRoleArn string, externalId string) *appmesh.DescribeMeshOutput {
-	log.Println("AWS AppMesh metadata by Mesh")
-	appmeshClient := client.GetClient(region, accessKey, secretKey)
+	log.Println("AWS AppMesh Metadata by MeshName")
+	appmeshClient := client.GetClient(region, crossAccountRoleArn, accessKey, secretKey, externalId)
 	appmeshResourceRequest := &appmesh.DescribeMeshInput{
 		MeshName: aws.String(meshName),
 	}

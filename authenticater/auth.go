@@ -4,6 +4,17 @@ import (
 	"log"
 
 	"github.com/Appkube-awsx/awsx-appmesh/vault"
+	"github.com/spf13/cobra"
+)
+
+var (
+	VaultUrl            string
+	AccountId           string
+	Region              string
+	AcKey               string
+	SecKey              string
+	CrossAccountRoleArn string
+	ExternalId          string
 )
 
 func AuthenticateData(vaultUrl string, accountNo string, region string, acKey string, secKey string, crossAccountRoleArn string, externalId string) bool {
@@ -31,4 +42,35 @@ func AuthenticateData(vaultUrl string, accountNo string, region string, acKey st
 		log.Fatal("AWS credentials like accesskey/secretkey/region/crossAccountRoleArn/externalId not provided. Program exit")
 		return false
 	}
+}
+
+func ChildCommandAuth(cmd *cobra.Command) bool {
+
+	VaultUrl = cmd.Parent().PersistentFlags().Lookup("vaultUrl").Value.String()
+	AccountId = cmd.Parent().PersistentFlags().Lookup("accountId").Value.String()
+	Region = cmd.Parent().PersistentFlags().Lookup("zone").Value.String()
+	AcKey = cmd.Parent().PersistentFlags().Lookup("accessKey").Value.String()
+	SecKey = cmd.Parent().PersistentFlags().Lookup("secretKey").Value.String()
+	CrossAccountRoleArn = cmd.Parent().PersistentFlags().Lookup("crossAccountRoleArn").Value.String()
+	ExternalId = cmd.Parent().PersistentFlags().Lookup("externalId").Value.String()
+
+	authFlag := AuthenticateData(VaultUrl, AccountId, Region, AcKey, SecKey, CrossAccountRoleArn, ExternalId)
+
+	return authFlag
+}
+
+// RootCommandAuth -> For validation of parent command
+func RootCommandAuth(cmd *cobra.Command) bool {
+
+	VaultUrl = cmd.PersistentFlags().Lookup("vaultUrl").Value.String()
+	AccountId = cmd.PersistentFlags().Lookup("accountId").Value.String()
+	Region = cmd.PersistentFlags().Lookup("zone").Value.String()
+	AcKey = cmd.PersistentFlags().Lookup("accessKey").Value.String()
+	SecKey = cmd.PersistentFlags().Lookup("secretKey").Value.String()
+	CrossAccountRoleArn = cmd.PersistentFlags().Lookup("crossAccountRoleArn").Value.String()
+	ExternalId = cmd.PersistentFlags().Lookup("externalId").Value.String()
+
+	authFlag := AuthenticateData(VaultUrl, AccountId, Region, AcKey, SecKey, CrossAccountRoleArn, ExternalId)
+
+	return authFlag
 }
