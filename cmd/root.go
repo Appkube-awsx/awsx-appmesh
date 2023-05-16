@@ -42,17 +42,17 @@ var AwsxMeshesMetadataCmd = &cobra.Command{
 func getListCluster(region string, crossAccountRoleArn string, accessKey string, secretKey string, externalId string) (*appmesh.ListMeshesOutput) {
 	log.Println("getting meshes metadata list summary")
 
-	listClusterClient := client.GetClient(region, crossAccountRoleArn, accessKey, secretKey, externalId)
+	listMeshClient := client.GetClient(region, crossAccountRoleArn, accessKey, secretKey, externalId)
 
-	listClusterRequest := &appmesh.ListMeshesInput{}
+	listMeshRequest := &appmesh.ListMeshesInput{}
 	
-	listClusterResponse, err := listClusterClient.ListMeshes(listClusterRequest)
+	listMeshResponse, err := listMeshClient.ListMeshes(listMeshRequest)
 	if err != nil {
 		log.Fatalln("Error:in getting  meshes list", err)
 	}
  
-	log.Println(listClusterResponse)
-	return listClusterResponse
+	log.Println(listMeshResponse)
+	return listMeshResponse
 }
 
 func Execute() {

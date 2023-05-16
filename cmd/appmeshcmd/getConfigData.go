@@ -57,22 +57,22 @@ var GetConfigDataCmd = &cobra.Command{
 func getMeshDetails(region string, crossAccountRoleArn string, accessKey string, secretKey string, meshName string, meshOwner string, externalId string) *appmesh.DescribeMeshOutput {
 	log.Println("Getting aws mesh data")
 
-	listClusterClient := client.GetClient(region, crossAccountRoleArn, accessKey, secretKey, externalId)
+	listMeshClient := client.GetClient(region, crossAccountRoleArn, accessKey, secretKey, externalId)
 
 	input := &appmesh.DescribeMeshInput{
 		MeshName: aws.String(meshName),
 		MeshOwner: aws.String(meshOwner),
 	}
 	
-	clusterDetailsResponse, err := listClusterClient.DescribeMesh(input)
+	meshesDetailsResponse, err := listMeshClient.DescribeMesh(input)
 
 	
 	if err != nil { 
 		log.Fatalln("Error:", err)
 	}
 
-	log.Println(clusterDetailsResponse)
-	return clusterDetailsResponse
+	log.Println(meshesDetailsResponse)
+	return meshesDetailsResponse
 
 }
 	
